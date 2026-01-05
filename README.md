@@ -53,6 +53,9 @@ Speed can be adjusted in `src/main.rs`:
 ```rust
 let tick_rate = Duration::from_millis(80); // Lower = faster
 ```
+## Demo
+
+![Snake Demo](https://github.com/traitimtrongvag/predator-snake-rs/raw/main/Example/example.gif)
 
 ## License
 
