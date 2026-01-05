@@ -1,0 +1,16 @@
+/target
+**/*.rs.bk
+Cargo.lock
+.cargo
+.rustc_info.json
+.rust-analyzer
+.rust-analyzer-cache
+.vscode
+.idea
+*.swp
+*.swo
+*.tmp
+*.log
+*.out
+.DS_Store
+Thumbs.db
