@@ -16,6 +16,7 @@ pub struct Game {
     height: u16,
     max_score: usize,
     current_score: usize,
+    death_blink_counter: Option<u8>,
 }
 
 impl Game {
@@ -27,11 +28,25 @@ impl Game {
             height: 0,
             max_score,
             current_score: 0,
+            death_blink_counter: None,
         }
     }
 
     pub fn tick(&mut self) {
         if self.width == 0 || self.height == 0 {
+            return;
+        }
+
+        if self.food.pos().x >= self.width || self.food.pos().y >= self.height {
+            self.food.respawn(self.width, self.height, &self.snake.body());
+        }
+
+        if let Some(counter) = self.death_blink_counter {
+            if counter == 0 {
+                self.reset();
+            } else {
+                self.death_blink_counter = Some(counter - 1);
+            }
             return;
         }
 
@@ -48,6 +63,11 @@ impl Game {
 
         self.snake.set_direction(next_dir);
         self.snake.advance();
+
+        if self.snake.is_dead() {
+            self.death_blink_counter = Some(4);
+            return;
+        }
 
         if self.snake.head() == self.food.pos() {
             self.snake.grow();
@@ -84,7 +104,7 @@ impl Game {
             height: self.height,
         };
 
-        self.snake.render(frame, inner);
+        self.snake.render(frame, inner, self.is_blinking());
         self.food.render(frame, inner);
         
         self.render_score(frame, area);
@@ -105,5 +125,14 @@ impl Game {
         self.snake = Snake::new(5, 5);
         self.food = Food::new(10, 10);
         self.current_score = 0;
+        self.death_blink_counter = None;
+    }
+
+    fn is_blinking(&self) -> bool {
+        if let Some(counter) = self.death_blink_counter {
+            counter % 2 == 0
+        } else {
+            false
+        }
     }
 }
