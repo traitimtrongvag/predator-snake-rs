@@ -11,7 +11,7 @@ pub struct Pos {
     pub y: u16,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Dir {
     Up,
     Down,
@@ -65,16 +65,23 @@ impl Snake {
     }
 
     pub fn grow(&mut self) {
-        self.pending_growth += 1; // Snake growth per food
+        self.pending_growth += 1;
     }
 
-    pub fn render(&self, frame: &mut Frame, area: Rect) {
+    pub fn is_dead(&self) -> bool {
+        let head = self.head();
+        self.body.iter().skip(1).any(|&pos| pos == head)
+    }
+
+    pub fn render(&self, frame: &mut Frame, area: Rect, blink: bool) {
+        let color = if blink { Color::White } else { Color::Green };
+        
         for pos in &self.body {
             if pos.x < area.width && pos.y < area.height {
                 let x = area.x + pos.x;
                 let y = area.y + pos.y;
                 
-                let span = Span::styled("●", Style::default().fg(Color::Green));
+                let span = Span::styled("●", Style::default().fg(color));
                 frame.render_widget(span, Rect { x, y, width: 1, height: 1 });
             }
         }
