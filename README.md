@@ -1,5 +1,7 @@
 # Snake Terminal
 
+[<img src="https://github.com/ratatui.png" align="right" width="100">](https://ratatui.rs)
+
 ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 
