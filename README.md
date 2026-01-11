@@ -39,7 +39,7 @@ cargo install snake-terminal
 Run:
 
 ```bash
-snake-terminal
+snake
 ```
 
 ### Build from source
