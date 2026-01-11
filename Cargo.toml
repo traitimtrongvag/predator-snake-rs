@@ -3,6 +3,15 @@ name = "snake-terminal"
 version = "0.1.0"
 edition = "2021"
 
+authors = ["An <pan2512811@gmail.com>"]
+description = "A terminal Snake game written in Rust using Ratatui"
+license = "MIT"
+repository = "https://github.com/traitimtrongvag/predator-snake-rs"
+homepage = "https://github.com/traitimtrongvag/predator-snake-rs"
+readme = "README.md"
+keywords = ["snake", "game", "tui", "ratatui"]
+categories = ["games", "command-line-utilities"]
+
 [dependencies]
 ratatui = "0.26"
 crossterm = "0.27"
