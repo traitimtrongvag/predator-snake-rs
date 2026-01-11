@@ -1,9 +1,10 @@
 # Snake Terminal
 
-[<img src="https://github.com/ratatui.png" align="right" width="100">](https://ratatui.rs)
+<img src="https://github.com/ratatui.png" align="right" width="100">
 
-![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
+[![Crates.io](https://img.shields.io/crates/v/snake-terminal.svg)](https://crates.io/crates/snake-terminal)
+[![Downloads](https://img.shields.io/crates/d/snake-terminal.svg)](https://crates.io/crates/snake-terminal)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A terminal screensaver featuring an autonomous snake that hunts for food using pathfinding algorithms.
 
@@ -15,19 +16,33 @@ The snake uses BFS pathfinding to intelligently navigate around obstacles, creat
 
 ## Features
 
-- Autonomous snake with intelligent pathfinding
-- Clean terminal UI with minimal design
-- Configurable max score for auto-reset
-- Real-time score tracking
-- Smooth animations at 80ms tick rate
+- ✨ Autonomous snake with intelligent pathfinding
+- 🎨 Clean terminal UI with minimal design
+- 🔄 Configurable max score for auto-reset
+- 📊 Real-time score tracking
+- ⚡ Smooth animations at 80ms tick rate
 
 ## Dependencies
 
-- **ratatui** `0.26` - Terminal UI framework
-- **crossterm** `0.27` - Terminal manipulation
-- **rand** `0.8` - Random number generation
+- **ratatui 0.26** - Terminal UI framework
+- **crossterm 0.27** - Terminal manipulation
+- **rand 0.8** - Random number generation
 
 ## Installation
+
+### Install from crates.io (recommended)
+
+```bash
+cargo install snake-terminal
+```
+
+Run:
+
+```bash
+snake-terminal
+```
+
+### Build from source
 
 ```bash
 git clone https://github.com/traitimtrongvag/predator-snake-rs.git
@@ -38,11 +53,13 @@ cargo build --release
 ## Usage
 
 Run with default settings (max score: 50):
+
 ```bash
 cargo run --release
 ```
 
 Run with custom max score:
+
 ```bash
 cargo run --release -- 100
 ```
@@ -52,12 +69,14 @@ Press `q` to quit.
 ## Configuration
 
 Speed can be adjusted in `src/main.rs`:
+
 ```rust
 let tick_rate = Duration::from_millis(80); // Lower = faster
 ```
+
 ## Demo
 
-![Snake Demo](https://github.com/traitimtrongvag/predator-snake-rs/raw/main/Example/example.gif)
+![Demo](demo.gif)
 
 ## License
 
