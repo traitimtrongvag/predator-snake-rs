@@ -8,6 +8,8 @@
 
 A terminal screensaver featuring an autonomous snake that hunts for food using pathfinding algorithms.
 
+![Demo](https://raw.githubusercontent.com/traitimtrongvag/predator-snake-rs/main/Example/example.gif)
+
 ## Description
 
 Snake Terminal is a visual terminal application where a green snake automatically navigates to consume red food pellets. Built with Ratatui, it provides an aesthetic terminal interface suitable for entertainment or as a live screensaver.
@@ -73,10 +75,6 @@ Speed can be adjusted in `src/main.rs`:
 ```rust
 let tick_rate = Duration::from_millis(80); // Lower = faster
 ```
-
-## Demo
-
-![Demo](demo.gif)
 
 ## License
 
