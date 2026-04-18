@@ -5,7 +5,7 @@ use ratatui::{
     Frame,
 };
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Pos {
     pub x: u16,
     pub y: u16,
@@ -68,9 +68,12 @@ impl Snake {
         self.pending_growth += 1;
     }
 
-    pub fn is_dead(&self) -> bool {
+    pub fn is_dead(&self, width: u16, height: u16) -> bool {
         let head = self.head();
-        self.body.iter().skip(1).any(|&pos| pos == head)
+        // out-of-bounds covers wall hits (Down/Right overflow, Up/Left clamp-then-trap)
+        head.x >= width
+            || head.y >= height
+            || self.body.iter().skip(1).any(|&pos| pos == head)
     }
 
     pub fn render(&self, frame: &mut Frame, area: Rect, blink: bool) {
