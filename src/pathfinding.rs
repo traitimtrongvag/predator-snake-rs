@@ -1,5 +1,5 @@
 use crate::snake::{Dir, Pos};
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 pub fn find_direction(
     head: Pos,
@@ -7,23 +7,24 @@ pub fn find_direction(
     body: &[Pos],
     width: u16,
     height: u16,
-) -> Dir {
+) -> Option<Dir> {
     let possible_dirs = get_safe_directions(head, body, width, height);
-    
+
     if possible_dirs.is_empty() {
-        return Dir::Right;
+        // fully trapped — let the caller decide (will trigger death on next tick)
+        return None;
     }
-    
+
     if let Some(path) = bfs(head, target, body, width, height) {
         if path.len() > 1 {
             let next_dir = direction_to(head, path[1]);
             if possible_dirs.contains(&next_dir) {
-                return next_dir;
+                return Some(next_dir);
             }
         }
     }
-    
-    let best_dir = possible_dirs.iter()
+
+    possible_dirs.iter()
         .max_by_key(|&&dir| {
             let next_pos = apply_direction(head, dir, width, height);
             let space = count_reachable_space(next_pos, body, width, height);
@@ -31,9 +32,8 @@ pub fn find_direction(
             space * 1000 - dist as usize
         })
         .copied()
-        .unwrap_or(Dir::Right);
-    
-    best_dir
+        .map(Some)
+        .unwrap_or(None)
 }
 
 fn get_safe_directions(head: Pos, body: &[Pos], width: u16, height: u16) -> Vec<Dir> {
@@ -79,53 +79,25 @@ fn apply_direction_unchecked(pos: Pos, dir: Dir) -> Pos {
 }
 
 fn count_reachable_space(start: Pos, body: &[Pos], width: u16, height: u16) -> usize {
-    let max_size = (width * height * 4) as usize;
-    let mut visited = vec![false; max_size];
+    // HashSet avoids the stride-mismatch bug from the old bool-vec approach.
+    // No arbitrary cap — we let BFS run the full reachable area so the
+    // fallback heuristic actually reflects available space.
+    let mut visited: HashSet<Pos> = HashSet::new();
     let mut queue = VecDeque::new();
-    let mut count = 0;
-    
+
+    visited.insert(start);
     queue.push_back(start);
-    let start_idx = (start.y * width * 2 + start.x) as usize;
-    if start_idx < max_size {
-        visited[start_idx] = true;
-    }
-    
+
     while let Some(current) = queue.pop_front() {
-        count += 1;
-        
-        if count > 50 {
-            break;
-        }
-        
-        for neighbor in neighbors_unrestricted(current, width, height) {
-            let idx = (neighbor.y * width * 2 + neighbor.x) as usize;
-            if idx < max_size && !visited[idx] && !body.contains(&neighbor) {
-                visited[idx] = true;
+        for neighbor in neighbors(current, width, height) {
+            if !visited.contains(&neighbor) && !body.contains(&neighbor) {
+                visited.insert(neighbor);
                 queue.push_back(neighbor);
             }
         }
     }
-    
-    count
-}
 
-fn neighbors_unrestricted(pos: Pos, width: u16, height: u16) -> Vec<Pos> {
-    let mut result = Vec::new();
-    
-    if pos.y > 0 {
-        result.push(Pos { x: pos.x, y: pos.y - 1 });
-    }
-    if pos.y < height + 10 {
-        result.push(Pos { x: pos.x, y: pos.y + 1 });
-    }
-    if pos.x > 0 {
-        result.push(Pos { x: pos.x - 1, y: pos.y });
-    }
-    if pos.x < width + 10 {
-        result.push(Pos { x: pos.x + 1, y: pos.y });
-    }
-    
-    result
+    visited.len()
 }
 
 fn distance_to_target(from: Pos, to: Pos) -> u16 {
@@ -216,9 +188,4 @@ fn direction_to(from: Pos, to: Pos) -> Dir {
     }
 }
 
-impl std::hash::Hash for Pos {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.x.hash(state);
-        self.y.hash(state);
-    }
-}
+
