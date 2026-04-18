@@ -61,10 +61,13 @@ impl Game {
             self.height,
         );
 
-        self.snake.set_direction(next_dir);
+        // None means no safe move exists; advance anyway so is_dead() fires below
+        if let Some(dir) = next_dir {
+            self.snake.set_direction(dir);
+        }
         self.snake.advance();
 
-        if self.snake.is_dead() {
+        if self.snake.is_dead(self.width, self.height) {
             self.death_blink_counter = Some(4);
             return;
         }
@@ -91,8 +94,10 @@ impl Game {
         self.width = area.width.saturating_sub(2);
         self.height = area.height.saturating_sub(2);
 
+        // Score goes in the border title to avoid overwriting the bottom border line
         let block = Block::default()
             .borders(Borders::ALL)
+            .title(format!(" SCORE: {} ", self.current_score))
             .style(Style::default().fg(Color::White));
         
         frame.render_widget(block, area);
@@ -106,19 +111,6 @@ impl Game {
 
         self.snake.render(frame, inner, self.is_blinking());
         self.food.render(frame, inner);
-        
-        self.render_score(frame, area);
-    }
-    
-    fn render_score(&self, frame: &mut Frame, area: Rect) {
-        use ratatui::text::Span;
-        
-        let score_text = format!("SCORE: {}", self.current_score);
-        let x = area.x + 1;
-        let y = area.y + area.height.saturating_sub(1);
-        
-        let span = Span::styled(score_text, Style::default().fg(Color::White));
-        frame.render_widget(span, Rect { x, y, width: 20, height: 1 });
     }
 
     fn reset(&mut self) {
